@@ -1,0 +1,97 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{xcolor}
+\lstset{
+backgroundcolor=\color[RGB]{245,245,244}
+language=Python
+keywordstyle=\color[RGB]{40,40,255}
+}
+
+
+
+
+\date{}
+
+\author{zw}
+
+
+\begin{document}
+
+\maketitle
+\title{\huge3.2.2.3 Unified Numerical Caliber(Normalization and Standardization)}
+
+\paragraph{This section describes the numericalization of categorical variables during data preprocessing.Categorical variables, also called nominal variable, generally refer to two or more categories, but have no rank order.
+\\ These categories have two principles, two principles: \\ I..Different categories must be mutually exclusive, each research object can only be classified into one category;\\II..All research objects belong to each other and cannot be left behind. For example, gender (male or female) is mentioned above; all categories of gender are included, while different categories are exclusive.}
+
+\subsection{Numericalization of categorical variables}
+\paragraph{The easiest way to quantify a categorical variable is to enumerate all the values and use an integer map.For example, blood types are divided into A, B, AB, O, which can be directly converted into 0, 1, 2, 3 to map.\\However, there will be a problem with this processing. The values ​​mapped here only represent the commodity category and have no size. However, if these values ​​are directly involved in the calculation, the program will consider the size of the values ​​themselves to be influential. Therefore, when the value represents the meaning without the concept of size, the direct mapping is not suitable.}
+
+\subsection{Data Normalization and Standardization}
+\paragraph{1.Normalization is the scaling of data to fall within a small, specific interval. It is often used in the processing of some indicators of comparison and evaluation to remove the unit limitation of the data and convert it into a pure dimensionless value so that indicators of different units or magnitudes can be compared and weighted
+\\2.In statistics and machine learning it is common to deal with different kinds of data (e.g. acoustic signals, pixel values of an image, lactate levels, platelet concentrations) which have different dimensions.
+Feature Standardization can average the values of each feature in the data to 0 and the standard deviation to 1. Many machine learning algorithms use this normalization method, such as support vector machines, logistic regression, and artificial neural networks.)\\
+
+In general, normalization and standardization are about keeping the data on the same starting line.}
+
+
+\subsection{\huge WHY Normalization and Standardization}
+\subsubsection{Normalization improves precision}
+\paragraph{In the multi-index evaluation system, due to the different nature of each evaluation index, it usually has different dimensions and orders of magnitude. When the level of each index differs greatly if the original index value is directly used for analysis, the role of the index with a higher numerical value in the comprehensive analysis will be highlighted, and the effect of the index with a lower numerical level will be relatively weakened. Therefore, to ensure the reliability of the results, it is necessary to standardize the original indicator data.
+\\Before data analysis, we usually need to standardize the data and use the standardized data for data analysis. Data standardization is also the indexation of statistical data. Data normalization processing mainly includes two aspects: data homogenization processing and dimensionless processing. Data co-taxis processing mainly solves the problem of data of different natures. The direct summation of indicators of different nature cannot correctly reflect the comprehensive results of different forces. It is necessary first to consider changing the nature of the data of inverse indicators so that the forces of all indicators on the evaluation plan are co-treating. And then add up to get the correct result. Data dimensionless processing mainly solves the comparability of data. After the above standardization process, the original data are converted into dimensionless index evaluation values. That is, each index value is at the same level of magnitude, and comprehensive evaluation and analysis can be carried out.
+\\From experience, normalization is to make the features between different dimensions have a certain numerical comparison, which can significantly improve the accuracy of the classifier.}
+
+\subsubsection{Speed up the optimal solution of gradient descent for machine learning}
+\paragraph{1.The numerical differences between multiple features/variables are too large, then the convergence rate will be slow in data processing. The value x1 is from 0 to 2000, and the value x2 is from 1 to 5. If there only these two features/variables, when they are optimized, a narrow and long ellipse will be obtained, resulting in the direction of the gradient when the gradient descends. Zigzag for the direction of the vertical contours, which makes iterations very slow.}
+\subsubsection{Data normalization in deep learning prevents model gradients from exploding.}
+#目标
+
+\paragraph{Some classifiers need to calculate the distance between samples (such as Euclidean distance, such as KNN)}
+\subsection{\huge 3 types of Feature Scaling}
+\subsubsection{Min-max normalization/0-1 normalization\\ }
+\paragrah{Also called dispersion standardization, it is a linear transformation of the original data, so that the result falls into the [0,1] interval. The conversion function is as follows}
+
+\paragrah{
+\begin{equation}
+x=\frac{X-X_{min}}{X_{max}-X_{min} }
+\end{equation}
+}
+
+\begin{lstlisting}
+def normalization(x):
+    return [(float(i)-min(x))/float(max(x)-min(x)) for i in x]
+\end{lstlisting}
+
+\parapraph{If the value X is to be mapped to the interval [a,b], the formula is\\
+\[
+x=a+\frac{(X-X_{min})(b-a)}{X_{max}-X_{min}}
+\]
+}
+
+\subsubsection{Mean normalization }
+\paragrah{If the value X is to be mapped to the interval [-1. 1], the mean value of A(Xmean) needs to be calculated, and the normalization method of mean value is formulated as\\
+
+\begin{equation}
+x=\frac{X-X_{mean}}{X_{max}-X_{min} }
+\end{equation}
+}
+
+\subsubsection{Standardization }
+\paragrah{Z-score NormalizationM, This method is based on the homogeneity Xmean and standard deviation Xstd of the original data X of attribute A to standardize the data, and is suitable for the situation where the maximum value XMax and the minimum value XMin of attribute A are unknown or there are outlier data beyond the range of values.The default normalization method in SPSS is Z-score. The standardized variable value fluctuates around 0, greater than 0 means above average, and less than 0 means below average.the formula is\\
+
+\begin{equation}
+x=\frac{X-X_{Mean}}{X_{Std}}
+\end{equation}
+}
+
+\subsection{Difference from Normalization and Standardization}
+\paragrah{The essence of normalization and normalization is scaling and translation.What they have in common is that they can cancel the errors caused by different dimensions. They are all linear changes, and they are all translated in proportion to the vector x.\\The difference between them is that:\\1.Normalization is to convert the eigenvalues of the sample to the same dimension (map the data to a fixed interval). The method is determined only by the extreme values of the variables.\\
+2.Standardization is to process the data according to the columns of the feature matrix, and convert the sample eigenvalues into a standard normal distribution by the Z-score method. This method is related to the distribution of the overall sample, and each sample point can have an impact on standardization.
+}
+
+\end{document}
+
+
+% \subsubsection{\\ b. Covert a dimensional expression to a dimensionless expression.}
+
+% \paragraph{1.The numerical differences between multiple features/variables are too large, then the convergence rate will be slow in data processing. The value x1 is from 0 to 2000, and the value x2 is from 1 to 5. If there only these two features/variables, when they are optimized, a narrow and long ellipse will be obtained, resulting in the direction of the gradient when the gradient descends. Zigzag for the direction of the vertical contours, which makes iterations very slow.}

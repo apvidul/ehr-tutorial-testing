@@ -1,0 +1,123 @@
+\documentclass{article}
+
+% if you need to pass options to natbib, use, e.g.:
+%     \PassOptionsToPackage{numbers, compress}{natbib}
+% before loading neurips_2021
+
+% ready for submission
+\usepackage{neurips_2021}
+
+% to compile a preprint version, e.g., for submission to arXiv, add add the
+% [preprint] option:
+%     \usepackage[preprint]{neurips_2021}
+
+% to compile a camera-ready version, add the [final] option, e.g.:
+%     \usepackage[final]{neurips_2021}
+
+% to avoid loading the natbib package, add option nonatbib:
+%    \usepackage[nonatbib]{neurips_2021}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{xcolor}         % colors
+
+\usepackage{booktabs,threeparttable}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage{pythonhighlight}
+
+\lstset{
+backgroundcolor=\color[RGB]{245,245,244}
+language=Python
+keywordstyle=\color[RGB]{40,40,255}
+}
+
+\newcommand{\xhdr}[1]{\vspace{1.7mm}\noindent{{\bf #1.}}}
+
+\usepackage{todonotes}
+\newcommand{\SideNote}[2]{\todo[color=#1,size=\footnotesize]{#2}}
+\newcommand{\keming}[1]{\SideNote{olive!40}{#1 --KL}}
+\newcommand{\hongmin}[1]{\SideNote{olive!40}{#1 --HX}}
+
+
+\title{Tutorial on Electronic Health Records Data}
+
+% The \author macro works with any number of authors. There are two commands
+% used to separate the names and addresses of multiple authors: \And and \AND.
+%
+% Using \And between authors leaves it to LaTeX to determine where to break the
+% lines. Using \AND forces a line break at that point. So, if LaTeX puts 3 of 4
+% authors names on the first line, and the last on the second line, try using
+% \AND instead of \And before the third author name.
+
+\author{%
+  % examples of more authors
+  % \And
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+  % \AND
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+  % \And
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+  % \And
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+}
+
+
+\begin{document}
+
+
+\maketitle
+
+\section{Introduction}
+
+\newpage
+
+
+% 1. Backgrounds
+\section{Ontology and Unified Medical Language System (UMLS)}
+\input{section1}
+\newpage
+ 
+
+
+% 2. Data processing on MIMIC 3
+\section{Data processing on MIMIC}
+\input{section2}
+\newpage
+
+
+
+% 3. Challenges of handling EHR data
+\section{Challenges of handling EHR data}
+\input{section3}
+\newpage
+
+
+
+
+
+\bibliographystyle{unsrt}
+\bibliography{reference}
+
+\end{document}

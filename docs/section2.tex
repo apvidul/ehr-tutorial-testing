@@ -1,0 +1,581 @@
+%----------------------------------------------------------------------------------------
+%	2. Data processing on MIMIC 3
+%----------------------------------------------------------------------------------------
+% New directory to be confirmed
+% 2. Data processing on MIMIC
+% 2.1 Introduction of mimic 3
+% 2.1.1 How to access MIMIC
+% 	2.1.1.1 Training/Security
+% 	2.1.1.2 MIMIC datasets download
+% 2.1.2 Data contained in the MIMIC 
+% 	2.1.2.1 Modules
+% 	2.1.2.2 Table columns
+% 2.1.3 Patient identifiers
+% 2.1.4 How to select data for your experiments
+% 2.2 Tabular Data Cleaning
+% 2.2.1 Data summary
+% 2.2.2 Unified variable type
+% 2.2.3 Unified numerical caliber
+% 2.2.4 Confirm legitimacy/Delete error value
+% 2.2.5 Timestamp conversion
+% 2.2.6 Missing data preprocessing
+% 2.3 Medical concept recognition on free text
+% 2.4 Rolling up codified data
+% 2.4.1 map icd to phecode
+% 2.4.2 map cpt to ccs
+% 2.5 Data analysis
+% 2.5.1 Project structure framework
+% 2.5.2 Description statistical analysis
+% 2.5.3 Feature scaling/Normalization
+% 2.5.4 Anomaly detection
+% 2.5.5 Bin
+% 2.5.6 Time series analysis
+% 2.5.7 Sample grouping
+
+
+\subsection{Introduction of MIMIC}
+\textbf {Why do we choose MIMIC}? \textbf{MIMIC} is a large, freely-available database comprising deidentified health-related data associated with over forty thousand patients who stayed in critical care units of the Beth Israel Deaconess Medical Center between 2001 and 2012. The database includes information such as demographics, vital sign measurements made at the bedside (\textasciitilde 1 data point per hour), laboratory test results, procedures, medications, caregiver notes, imaging reports, and mortality (including post-hospital discharge). MIMIC database includes MIMIC-II to MIMIC-IV. The new generation of data has a wider source and better organization. As shown in the  figure, it is an example of the composition of MIMIC-IV.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\linewidth]{images/MIMIC_composition.png}
+    \caption{An example of the composition of MIMIC-IV}
+    \label{fig:MIMIC_composition}
+\end{figure}
+
+MIMIC supports a diverse range of analytic studies spanning epidemiology, clinical decision-rule improvement, and electronic tool development. It is notable for three factors: it is freely available to researchers worldwide; it encompasses a diverse and very large population of ICU patients; and it contains highly granular data, including vital signs, laboratory results, and medications.
+
+MIMIC related \href{https://www.nature.com/articles/sdata201635.pdf}{papers} \footnote{Johnson A , Pollard T J , Shen L , et al. MIMIC-III, a freely accessible critical care database[J]. Scientific Data.} can be accessed at the following address.
+\textbf {In short, our most important focus in choosing MIMIC is}:
+\begin{itemize}
+\item Public dataset
+\item Huge amount of sample (Total uncompressed size: 6.2 GB)
+\item Rich variable modes (More than 20 types of tables)
+\item Huge variable dimension (Thousands of features)
+\end{itemize}
+
+\subsubsection{Access to MIMIC}
+% Overview of the source, composition of MIMIC
+Since the MIMIC dataset is a restricted-access resource, researchers have to get credentialed and complete required training before conducting any research with MIMIC. 
+In this part, we will elaborate the procedure of applying for the access to the dataset.
+The general procedure is shown in Figure~\ref{fig:Files} \footnote{ \url{https://physionet.org/content/mimiciv/2.0/}}.
+
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[scale=0.7]{images/Files.jpg}
+    \caption{Access to MIMIC}
+    \label{fig:Files}
+\end{figure}
+
+\xhdr{Registration} To begin with, we have to set up an account at PhysioNet~\footnote{\url{https://physionet.org/}}. 
+It only requires you to set your email, name, and password in this step.
+An educational email address will be more favorable for the following credentialing.
+
+\xhdr{Credentialing} After logging in, we have to get the account credentialed by PhysioNet in this page~\footnote{\url{https://physionet.org/settings/credentialing/}}. 
+We need to fill in an application form about your personal information, your reference, and the research you are going to conduct with MIMIC.
+The information about \textbf{reference} and \textbf{research} is crucial to the application, so please make sure you provide all these details correctly.
+Then, PhysioNet will review your application and make a decision within four weeks.
+
+\xhdr{Training} Because MIMIC contains private health records about handureds of thousands of patients, researchers must abide by a strict moral code when conducting their projects.
+We will learn the code through a training course called "Data or Specimens Only Research". 
+PhysioNet provides an instruction about how to finish the course in this page~\footnote{\url{https://physionet.org/about/citi-course/}}.
+Generally speaking, the course requires you to sign up at CITI program~\footnote{\url{https://about.citiprogram.org/}}, read some materials, and finish several tests.
+After finishing the course, you need to submit your \textbf{completion report} to PhysioNet for reviewing.
+
+Since both the review of application and training take several weeks, you can submit your training completion report right after you submit the credentialing form.
+As soon as PhysioNet approves your application and training report, you are able to access and download the dataset.
+
+Please make sure that \textbf{everyone} who has access to the MIMIC dataset on your team gets approved by PhysioNet through the procedure above.
+
+
+% \setcounter{tocdepth}{4}
+% \setcounter{secnumdepth}{4}
+% \paragraph{MIMIC datasets download}~\\
+% After application and authorization, data information can be obtained through cloud platform and direct access.
+% \begin{enumerate}
+% \item Get into \href{https://mimic.mit.edu/}{here}
+
+% \item Click getting started turn to \href{https://mimic.mit.edu/docs/gettingstarted/}{here}
+
+% \item Click Instructions for the credentialing process are provided on  \href{https://physionet.org/login?next=/settings/credentialing/}{PhysioNet} or log in directly
+
+% \item Register and log in
+% \begin{enumerate}
+% \item In the first step, select organization association and enter Massachusetts Institute of technology affiliates
+% \item In the human subject training category, select the "data or sample study only" course
+% \end{enumerate}
+
+% \item Complete the course
+
+% \item On the getting started \href{ https://mimic.mit.edu/docs/gettingstarted/}{ page} login PhysioNet account
+
+% \item Access data items (MIMIC-II / III / IV), and the data set is at the bottom
+% \end{enumerate}
+
+\subsubsection{Data contained in the MIMIC}
+\setcounter{tocdepth}{4}
+\setcounter{secnumdepth}{4}
+\paragraph{Modules}~\\
+There are many kinds of medical data recorded by patients, so MIMIC is a multi-modal data set. Its multi-modal means that the data presents different forms and is collected in many ways. Specifically, MIMIC is composed of tabular data, free text data, medical image data, waveform data (ECG recording), etc. Echo reports, ECG reports, and radiology reports are available for both inpatient and outpatient stays. waveform record containing digitized signals (typically including ECG, ABP, respiration, and PPG, and frequently other signals) and a “numerics” record containing time series of periodic measurements, each presenting a quasi-continuous recording of vital signs of a single patient throughout an ICU stay (typically a few days, but many are several weeks in duration). 
+
+\textbf{Tabular data:}
+Tabular data is the most common data form in MIMIC, which records the structured information. These information usually comes from the structured text medical record, the electronic medical record system of the hospital, or the automatic recording of traditional Chinese medicine instruments in ICU. There are patient tables and dictionary tables. The patient table records various data of many patients, and the dictionary table records the medical information of the characteristic fields in the patient table. 
+
+\textbf{For example,} the patient's test items, such as white blood cells and red blood cells, are recorded in the labels file. Each line is a record for a specific patient ID, specific visit ID, specific test item ID and specific time node chattime. If it is a record in ICU, it may also be related to icutayid. The relationship tables is \href{ https://mit-lcp.github.io/mimic-schema-spy/relationships.html }{here}. 
+
+
+\textbf{Free text data:}
+ultrasound reports, ECG reports and radiology reports for inpatients and outpatients. The content is the natural language written by doctors, which contains a large number of medical terms.
+
+\textbf{Image data:}
+the latest version of MIMIC database - MIMIC-IV has X-ray chest films in two directions (with corresponding image reports at the same time).
+
+\textbf{Waveform data:}
+waveform records include digital signals (usually including ECG, ABP, respiration and PPG, and other common signals) and "digital" records, which contain time series of periodic measurements. Each record presents a quasi continuous record of individual patient's vital signs during ICU hospitalization (usually several days, but many records last for several weeks).
+
+\setcounter{tocdepth}{4}
+\setcounter{secnumdepth}{4}
+\paragraph{Table columns}~\\
+Tabular data containing many tables is the most important part of MIMIC. It consists of laboratory data sheet, ICU data sheet, etc. Each row of tabular data is an instance, and each column is a variable. Columns usually contain identifier, storage time and special variables of current table. For example, blood test results will appear in the laboratory table and urine output dose will appear in the ICU table. The unique fields of each table are different, which can be retrieved in the following documents.As shown in the table \ref{tab:Example of MIMIC tabular data}, it is an example of mimic tabular data of simulated data based on the patient table.
+\begin{table}[ht]
+\centering
+\caption{An example of mimic tabular data of simulated data based on the patient table. subject\_ID denotes the identifier of the patient. anchor\_age, anchor\_Year denotes the age after time conversion, and dod denotes death}
+\label{tab:Example of MIMIC tabular data}
+\begin{tabular}{ccccccc}
+\toprule
+\textbf{subject\_id} & \textbf{gender} & \textbf{anchor\_age} & \textbf{anchor\_year} & \textbf{anchor\_year\_group}& \textbf{dod} \\ \midrule
+29463-7 & M & 100 & 45 & 2 & True \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Tables pre-fixed with “D\_” are dictionaries and provide definitions for identifiers and variables}. For example, every row of OUTPUTEVENTS is associated with a single ITEMID which represents the concept measured, but it does not contain the actual name of the drug. By joining OUTPUTEVENTS and D\_ITEMS on ITEMID, it is possible to identify what concept a given ITEMID represents. As shown in table\ref{tab:Example of MIMIC tabular data dictionary} ,an Example of mimic tabular data of simulated data based on the patient table.
+
+\begin{table}[ht]
+\centering
+\caption{An example of mimic tabular data of simulated data based on the d\_labitems table. itemid denotes the identifier of the laboratory test, label denotes the project name of the laboratory test, fluid denotes the type of test sample, category denotes the type of the test, loinc\_code denotes the identifier of the test}
+\label{tab:Example of MIMIC tabular data dictionary}
+\begin{tabular}{ccccc}
+\toprule
+\textbf{itemid} & \textbf{label} & \textbf{fluid} & \textbf{category} & \textbf{loinc\_code}\\ \midrule
+42129 & Absolute CD3 Count & Blood & Chemistry & 8124-0 \\ \bottomrule
+\end{tabular}
+\end{table}
+
+The detailed introduction is in this \href{https://mimic.mit.edu/docs/}{document}.
+
+\subsubsection{Entity(Patient/Medical concept) identifiers}
+The tables are linked by identifiers which usually have the suffix \textbf{“ID”}. For example \textbf{HADM\_ID refers to a unique hospital admission} and \textbf{SUBJECT\_ID refers to a unique patient}. One exception is ROW\_ID, which is simply a row identifier unique to that table. The ID identifier is described as follows:
+\begin{itemize}
+\item \textbf{SUBJECT\_ID} Patient level. This data is constant for a patient.
+
+\item \textbf{HADM\_ID} Hospital level. This data is constant for each admission.
+
+\item \textbf{ICUSTAY\_ID} ICU level. This data is constant every time patients enter the ICU.
+\end{itemize}
+
+Figure \ref{fig:MIMIC_identifiers_correspondence} shows an example of the correspondence between MIMIC ID identifiers.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\linewidth]{images/MIMIC_identifiers_correspondence.png}
+    \caption{An example of the correspondence between MIMIC ID identifiers}
+    \label{fig:MIMIC_identifiers_correspondence}
+\end{figure}
+
+
+\textbf{Patient correspondence}
+A patient corresponds to a subject\_ID, a patient may be admitted multiple times and have multiple hadms\_ID, one admission may have multiple access to ICU and multiple ICDs\_id
+A HADM\_ID may correspond to multiple icustays\_id
+A HADM\_ID is usually used the first icustay\_ID corresponding to Carry out relevant research
+
+\textbf{Medical concept correspondence}
+Dictionary table is used to query a specific detail, for example:
+For example, query the white blood cell data of a patient (in the labels table),
+First, you need to find the corresponding three IDS (subject\_id, hadm\_id, icd\_id), and then find the item of leukocyte in the laboratory examination code (d\_labitems), and then look it up in the labels table.
+
+\textbf{Correspondence between patients and features}
+The patient number, medical record number and ICU number are used as the joint primary key to determine the patient. The item identifier is item\_ID, for example, the item identifier corresponding to this item can be in D\_Labitems can be found in the dictionary Record time and storage time are the storage time of corresponding items Recording time can be used to filter specific time window (for example, data within 24 hours of entering ICU) The difference between the previous icustays enrollment time and the current measured time is used to determine the study cohort.
+
+\subsubsection{How to select data for your experiments}
+
+Different clinical tasks correspond to different data mining requirements, and data can be selected according to the type of clinical tasks and the purpose of the project
+\textbf {The related researches can be carried out based on MIMIC data set:}
+\begin{itemize}
+\item \textbf {Predictive tasks:}
+\begin{itemize}
+\item Patient outcome prediction 
+\item Prediction of intervention results 
+\item Disease prediction
+\end{itemize}
+\item \textbf {Retrospective tasks:}
+\begin{itemize}
+\item Analysis of clinical characteristics 
+\item Intervention mode analysis 
+\item Risk factor analysis
+\end{itemize}
+\end{itemize}
+
+\textbf{All data were selected for the study.} All data can be selected if multi classification diagnosis is made for disease or analysis is made for survival after discharge. Among them, since most of the mimic data are concentrated in ICU, it is significant for survival prediction.
+
+\textbf{Using ICD code corresponding to disease to select patients.}
+DIAGNOSES\_ID The ICD-9 diagnostic code of the patient is recorded in the ICD table. For example, it will be used when you want to do some research on disease diagnosis or disease prediction A patient may correspond to multiple diagnoses, so it is a table in sequence format You may think that the first is the patient's main disease.
+
+\textbf{Based on the drug information in the descriptions table}
+If you want to study drug efficacy or drug interaction, you can screen patients and make medical records based on the drug information used by patients.
+
+\subsection{Tabular Data Cleaning}
+Due to some reasons of medical data collection, data sets contain a lot of noisy, incomplete and even inconsistent data. Obviously, data sets should be preprocessed before data analysis to improve data quality.Some preparatory work should be done before data pretreatment, and unified file establishment and storage, naming rules should be followed, so as to find and reproduce others later.Data preprocessing includes data cleaning, data integration, data conversion and data subtraction.Data cleaning refers to eliminating noise and correcting inconsistent errors in data, including incomplete, error and duplicate data. Data integration refers to combining data from multiple data sources to form a complete data set.Data conversion refers to the conversion of data in one format to data in another format.Finally, data reduction refers to the elimination of redundant data by deleting redundant features or clustering, such as data discretization.Data preprocessing can help improve the quality of data, which in turn helps improve the effectiveness and accuracy of the medical data mining process.High quality decision comes from high quality data, so data preprocessing is an important step in the whole process of medical data mining and knowledge discovery.
+
+\subsubsection{Data summary}
+Before implementing data mining, you must understand your goal, that is, what problems need to be solved through mining. After you know your goals or problems to be solved, first back up the data, keep a copy of the original data and never change it. The next step is to examine the data, such as observing the number of samples, dimension size, missing condition and feature type. Finally, clean the data to provide a basis for data analysis.
+
+\subsubsection{Confirm legitimacy}
+In the process of inputting a few data, the data format is not uniform due to format error, format confusion or operator input error, that is, illegal values appear. For example, the test results in the laboratory are usually floating-point numbers. However, string data of < 100 may appear in some data. In order to unify the data format, it is necessary to perform feature processing on the columns that should be numeric variables but are character type (or object type) after data acquisition. By referring to the variable name, that is, the medical entity referred to by the current columns, understand the type of data in the current columns and give corresponding processing, such as converting the string of < 100 to 0 or the average value of 50. Processing example of illegal value as shown in Figure \ref{fig:MIMIC_illegal_value}.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\linewidth]{images/MIMIC_illegal_value.png}
+    \caption{Processing example of illegal value}
+    \label{fig:MIMIC_illegal_value}
+\end{figure}
+
+
+\subsubsection{Unified variable type}
+In the process of data collection, there may be problems such as inconsistent multi-source data format, damaged database integrity or staff errors. There are inconsistent data formats of the same field (feature) in the data, such as string data in the age field (generally int value) or laboratory inspection result field (generally float value). Another example is the occurrence of integer data in a time record (usually string value). In order to avoid the above situation, we need to review and unify the format of data.
+
+First of all, we need to be familiar with the format of each eigenvalue in the data. For the mimic data set, we can find the format of the corresponding feature in the document. For the features that cannot be found, we can observe the format of most of the data to determine the format. Then, the data that does not belong to this type in this feature is processed by code conversion, manual conversion or direct deletion. Processing example of variable type unification as shown in Figure \ref{fig:MIMIC_variable_type_unification}.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\linewidth]{images/MIMIC_variable_type_unification.png}
+    \caption{Processing example of variable type unification}
+    \label{fig:MIMIC_variable_type_unification}
+\end{figure}
+
+\subsubsection{Code aggregation}
+Code aggregation, also known as rolling up, is to group low-level codes into high-level ones to reduce the total amount of codes in the dataset. 
+In section~\ref{sec:Aggregation of codified data}, we have discussed fundamental concepts and methods of code aggregation. 
+In MIMIC, there are HCPC (CPT), ICD-9, ICD-10-PCS, ICD-10-M, NDC, and some codes defined by MIMIC itself.
+According to section~\ref{sec:Aggregation of codified data}, We can convert procedure codes, in-
+cluding HCPC, ICD-9, ICD-10-PCS, to CCS codes; 
+Diagnosis codes, including ICD-9 and ICD-10-CM, can be grouped to PheCodes;
+NDC codes can be aggregated to RxNorm.
+In this way, we are able to compress more than 48,000 codes into about 1,700 ones.
+
+The process of code aggregation is straightforward: we create mapping tables and map the codes in the dataset.
+
+Mapping tables are derived from some public resources. 
+For example, we can download some tables mapping ICDs to PheCodes from PheWAS\footnote{\url{https://phewascatalog.org/phecodes}}.
+They provide tables in the format shown in Table~\ref{tab:phewascatalog}.
+
+\begin{table}[ht]
+\centering
+\caption{Mapping ICDs to PheCodes}
+\label{tab:phewascatalog}
+\begin{tabular}{cccccc}
+\toprule
+ICD9  & ICD9 String                & PheCode & Phenotype           & Excl. Phecodes & ......     \\ \midrule
+003.0 & Salmonella gastroenteritis & 008.5   & Bacterial enteritis & 001-009.99     & ...... \\ \bottomrule
+\end{tabular}
+\end{table}
+
+In this case, we only need information in columns \textbf{ICD9} and \textbf{Phecode}, so we keep these two columns and remove all the others to create the mapping table.
+We can also remove those rows with codes that do no appear in our dataset.
+
+In the cleaning program, we load these mapping tables as dictionaries. 
+With these dictionaries, the original clinical codes in the dataset can be mapped into desired healthcare systems directly.
+
+Some codes in the dataset cannot be aggregated with the mapping tables.
+We can leave these codes untouched in our dataset or simply remove them.
+
+
+\subsubsection{Frequency Filtering}
+Frequency filtering is to discard codes with low frequency in the dataset.
+This procedure is not always necessary, but if the frequency of some codes is too low to provide precise information about diseases or treatments, removing these codes from your research can be beneficial.
+Usually, we set the threshold of filtering according to experience. 
+In MIMIC, we can set the threshold as 1,000, which means we discard all codes with a frequency lower than 1,000.
+
+The concept of frequency filtering is intelligible, but the operation can be tricky.
+To filter low-frequency codes and reserve high-frequency ones, we have to count the frequency of all codes and record high-frequency codes in a dictionary in advance.
+In the following procedures, we only deal with codes in this dictionary and neglect the others.
+In the dictionary, you can record not only codes but also some extra information such as statistics, units of measurement, and labels.
+Table~\ref{tab:dictionary example} provides a simple example of dictionary format.
+
+\begin{table}[ht]
+\centering
+\caption{An example of dictionary format}
+\label{tab:dictionary example}
+\begin{tabular}{@{}cccccc@{}}
+\toprule
+code  & frequency & source\_table & unit\_of\_measurement & label             & description \\ \midrule
+51279 & 3278470   & labevents     & m/ul                  & Red Blood Cells   & ...         \\
+51006 & 3283231   & labevents     & mg/dl                 & Urea Nitrogen     & ...         \\
+51301 & 3283759   & labevents     & k/ul                  & White Blood Cells & ...         \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Variables encoding}
+This part describes the numericalization of categorical variables during data preprocessing. Categorical variables, also called nominal variable, generally refer to two or more categories, but have no rank order.
+
+\textbf{Numericalization of categorical variables.} The easiest way to quantify a categorical variable is to enumerate all the values and use an integer map.For example, blood types are divided into A, B, AB, O, which can be directly converted into 0, 1, 2, 3 to map.\\However, there will be a problem with this processing. The values mapped here only represent the commodity category and have no size. However, if these values are directly involved in the calculation, the program will consider the size of the values themselves to be influential. Therefore, when the value represents the meaning without the concept of size, the direct mapping is not suitable.
+
+These categories have two principles: 
+\begin{itemize}
+\item Different categories must be mutually exclusive, each research object can only be classified into one category
+\item All research objects belong to each other and cannot be left behind. For example, gender (male or female) is mentioned above; all categories of gender are included, while different categories are exclusive
+\end{itemize}
+
+Processing example of variable encoding as shown in Figure \ref{fig:MIMIC_variable_encoding}.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\linewidth]{images/MIMIC_variable_encoding.png}
+    \caption{Processing example of variable encoding}
+    \label{fig:MIMIC_variable_encoding}
+\end{figure}
+
+\subsubsection{Timestamp conversion}
+There are a lot of time slice interval features in MIMIC, including fixed time period and non fixed time period. When time-varying data needs to be considered, time series analysis should be used instead of sample grouping.
+
+\textbf{Time} in the database is stored with one of two suffixes: TIME and DATE. If a column has TIME as the suffix, e.g. CHARTTIME, then the data resolution is down to the minute. If the column has DATE as the suffix, e.g. CHARTDATE, then the data resolution is down to the day. That means that measurements in a CHARTDATE column will always have 00:00:00 has the hour, minute, and second values. This does not mean it was recorded at midnight: it indicates that we do not have the exact time, only the date.
+\textbf{All dates in the database have been shifted to protect patient confidentiality}. Dates will be internally consistent for the same patient, but randomly distributed in the future. This means that if measurement A is made at 2150-01-01 14:00:00, and measurement B is made at 2150-01-01 15:00:00, then measurement B was made 1 hour after measurement A.
+Most data, with the exception of patient related demographics, are recorded with a time indicating when the observation was made:
+\begin{itemize}
+\item \textbf{CHARTTIME:} In order to facilitate efficient observations by nursing staff, the day was separated into hourly blocks, and observations were recorded within these hourly blocks. Thus, any time one performed a measurement between the hours of 04:00 and 05:00, the data would be charted in the 04:00 block, and so on. Even if data is recorded at 04:23, in many cases it is still charted as occurring at 04:00.In almost all cases, this is the time which best matches the time of actual measurement. In the case of continuous vital signs (heart rate, respiratory rate, invasive blood pressure, non-invasive blood pressure, oxygen saturation), the CHARTTIME is usually exactly the time of measurement. 
+
+\item \textbf{STORETIME:} STORETIME data provides information on the recording of the data element itself. All observations in the database must be validated before they are archived into the patient medical record. The STORETIME provides the exact time that this validation occurred. For example, a heart rate may be charted at 04:00, but only validated at 04:40. This indicates that the care provider validated the measurement at 4:40 and indicated that it was a valid observation of the patient at 04:00. Conversely, it’s also possible that the STORETIME occurs before the CHARTTIME. While a Glasgow Coma Scale may be charted at a CHARTTIME of 04:00, the observation may have been made and validated slightly before (e.g. 3:50). Again, the validation implies that the care staff believed the measurement to be an accurate reflection of the patient status at the given CHARTTIME.
+\end{itemize}
+
+\subsubsection{Missing data preprocessing}
+Missing values are common in the mimic table data. However, it is necessary to distinguish whether the missing value is the default value or the data is missing. For example, some patients who survive at discharge have missing Death FLAG values because survival may be the default value. The missing detection value in the biochemical examination is indeed due to the missing data.
+
+For default data, you can fill in the default value, while for actual missing data, you can not operate, or mark it with 'NaN' or 'None'. The absence can be brought into the model as an independent category. The key point is to distinguish the actual missing value from the default value to avoid ambiguity in the subsequent analysis of missing values in data mining.
+
+An example of preprocessing missing data as shown in Figure \ref{fig:MIMIC_missing_preprocessing}.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\linewidth]{images/MIMIC_missing_preprocessing.png}
+    \caption{An example of preprocessing missing data}
+    \label{fig:MIMIC_missing_preprocessing}
+\end{figure}
+
+\subsection{Medical entity linking}% 2.3
+
+\subsubsection{Background}
+
+Medical entity linking aims to identify mentions of medical concepts in free text. For example, ``Type 2 diabetes'' is a mention of PheCode 250.2 in the sentence ``Type 2 diabetes is a subtype of diabetes.''. A mention includes term of concept and its span in the sentence. The concept usually comes from a given medical knowledge bases, such as SNOMED, UMLS, or MeSH. There are various techniques developed for medical entity linking, which including unsupervised text-based methods, e.g. Multi-pattern matching, and supervised methods with neural networks.
+
+\subsubsection{Multi-pattern matching}
+Forward maximum matching algorithm is an algorithm that identifies all the words that appear in the word list in the text given the word list. The term "maximum" refers to the tendency to match words that are as long as possible, for instance, “breast” and “breast cancer” are contained in the word list, “breast cancer” should be matched instead of “breast” in the text “Breast cancer has an incidence of 24.2$\%$ of global women cancers”. The meaning of "forward" is to match from the beginning of the string until the end of the string, as opposed to "reverse matching", which starts from the end of the string to the beginning of the string. For example, if the word list contains "global", "global women", "women cancers", "cancers", using the forward matching method, “global women” and “cancers” should be matched from the text "Breast cancer has an incidence of 24.2$\%$of global women cancers." instead of "global" and "women cancers". \par
+Forward maximum matching algorithm requires that scanning sentences continues when and only when the current word plus the next character is a word or a prefix of a word in the word list. This characteristic allows the use of Trie trees to greatly improve the efficiency of lookups. Trie trees use a tree structure to store all the words in the word list, where all nodes except the root node store a character, and the hash table of the next character in the word in the word list for that character. The key of the hash table is the next character and the value is the node corresponding to that character. The characters on the path from the root node to any child node are joined in order to form a word or a prefix of a word in the word list. Each node also stores a Boolean value that indicates whether the word formed by the path from the root node to that node is a word in the word list. The word list {"to", "A", "tea", "ted", "ten", “i”, “in”, “inn”} generates Trie tree as shown in the figure below, where the gray nodes indicate false Boolean values and orange nodes are true Boolean values. \par
+\begin{figure}
+    \centering
+    \includegraphics{images/2.3(1).png}
+\end{figure} 
+
+This forward maximum matching algorithm can be expedited with Trie or Aho-Corasick Automation. The modified forward maximum matching algorithm combined with the Trie tree first fixes the starting character and scans backward one by one. Each scan determines whether the string composed from the current start position to the end position is in Trie tree. If so, it continues to scan backward. Further, if the current string is a word in the word list, its position is recorded; I'm otherwise, it skips out and the scan starts from the next starting position. The pseudo code of the algorithm is as follows. \par
+\begin{figure}
+    \centering
+    \includegraphics{images/2.3(2).png}
+\end{figure} 
+
+\subsubsection{Named entity recognition}
+
+Biomedical named entity recognition (NER) is one of the most essential tasks in biomedical natural language understandings~\cite{gu2021domain}. It aims to identify mentions of entities in free text with the help of supervised data. The input of NER task is free text and outputs are tags that identify start and end of mention spans. Various datasets are proposed to evaluate NER algorithms in biomedical domain. The most widely-used datasets include two manual annotated datasets from BC5CDR corpus that focuses on chemistry and disease~\cite{li2016biocreative}; NCBI-disease focusing on diseases extracted from NCBI corpus~\cite{dougan2014ncbi}; and Medmentions which is a large-scale datasets based on pubmed corpus with UMLS annotations~\cite{mohan2019medmentions}.
+
+%\subsubsection{Term normalization}
+
+\subsection{Rolling up codified data}
+
+Many codes in MIMIC data can be aggregated into high-level codes. We mapped the procedure codes (HCPC, ICD-9, ICD-10-PCS codes) to CCS codes, the diagnosis codes (ICD-9 and ICD-10-CM codes) to PheCodes, the medication codes (NDC codes)to RxNorm CUIs.
+
+
+
+% \subsubsection{map icd to phecode}
+% \subsubsection{map cpt to ccs}
+
+\subsection{MIMIC cleaning example code}
+
+
+We have released the source code of an example of the medical code rollup for MIMIC data at \href{}. It consists of the following four parts: Roll up CPT to CCS; Roll up ICD to PheCode; Roll up ICD-10-PCS and ICD-9-CM to CCS; Roll up ICD-10-PCS and ICD-9-CM to CCS. For procedure CPT codes, we have to parse original mapping at first and then create our mapping table. To roll up ICD codes to PheCode, we can filter wanted rows and columns without extra operations. For procedure ICD codes, we need two original mapping tables to aggregate them to CCS codes. These original tables provide mappings directly, so we can filter wanted rows and columns without extra operations. To roll up NDC codes to RxNorm codes, we have to map RxNorm codes to their ingredients and then aggregate NDC to RxNorm.
+
+We have released the source code of an example of cleaning MIMIC data at \href{}. It is divided into three parts. The first part is data loading, the second part is data cleaning, and the third part is an overview of the cleaned data. We screen patients by specific ICD coding group, and take a visit of a patient as a sample. First, determine the subject\_id and hadm\_id corresponding to the ICD, and then select the corresponding data from other tables according to the above IDs.
+Second, connect data from different tables and clean them.
+
+\subsection{Data analysis}% 2.4
+\subsubsection{Project structure framework}
+
+In order to ensure data retention, code readability and no loss of reports, we need a logical, standardized and flexible project structure framework. See \href{https://drivendata.github.io/cookiecutter-data-science/}{here} for details.
+
+An example of directory structure is shown in Figure \ref{fig:directory_structure}.
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/directory_structure.png}
+    \caption{An example of project directory structure. Clear classification and hierarchical structure can make work more efficient.}
+    \label{fig:directory_structure}
+\end{figure}
+
+\textbf{It should also be noted that}
+Never edit raw data, especially manually. Do not overwrite the original data and do not save multiple versions of the original data. Treat data (and its format) as immutable. The code should move the raw data through the pipeline to the final analysis. However, this does not mean that every run of the code should start from scratch. You can take the data cleaning process as a separate pre-processing part and generate the processed intermediate data.
+
+\subsubsection{Statistical analysis}% 2.4.1 
+Statistical analysis finds the rule of a single feature or finds the relationship between features from feature groups. Specifically, it includes descriptive statistics, hypothesis testing, correlation analysis, analysis of variance, regression analysis, cluster analysis, principal component analysis, time series analysis, and other analysis methods. The statistical analysis of this tutorial mainly focuses on two points: Overview of characteristic distribution; Distribution difference between training set and test set.
+
+\textbf{The statistics of distribution are helpful to understand the characteristics in advance.} For example, the weight should be normally distributed. However, due to the characteristics of the data itself or the preference at the time of collection, it can become a skewed distribution, which also shows that the patients in the data set tend to be fat / thin. Statistics of eigenvalues includes mean, variance, median, maximum, minimum, quantile, skewness, kurtosis and so on.
+
+\textbf{The correlation between features measures the relationship between two distributions by some measurement method.} The features correlation heatmap is shown in the following Figure \ref{fig:heatmap_MIMIC}. 
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.5\linewidth]{images/heatmap_MIMIC.png}
+    \caption{An example of feature correlation heatmap, the abscissa and ordinate are features. The lighter the color in the map, the more negative the correlation, and the darker the color, the more positive the correlation.}
+    \label{fig:heatmap_MIMIC}
+\end{figure}
+When there are two highly correlated non labeled features in the data set, one of them will be considered to be removed, because the large correlation may bring the trouble of multicollinearity. When there is no correlation between other features and label features (targets), it does not mean that the features have no relationship with the targets, because the above correlation mostly refers to linear correlation, while the correlation also has nonlinear correlation.Empirical value of the degree of correlation is shown in the table \ref{tab:Empirical value of the degree of correlation}:
+
+\begin{table}[ht]
+\centering
+\caption{Empirical value of the degree of correlation (absolute value).}
+\begin{tabular}{|c|c|}
+\hline
+\textbf{correlation coefficient} & 
+\textbf{degree} \\ \hline
+0.0-0.2  & 
+no correlation - very weak correlation \\ \hline
+0.2-0.4  & 
+weak correlation \\ \hline
+0.4-0.6  & 
+moderate correlation \\ \hline
+0.6-0.8  & 
+strong correlation \\ \hline
+0.8-1.0  & 
+very strong correlation \\ \hline
+\end{tabular}
+\label{tab:Empirical value of the degree of correlation}
+\end{table}
+
+\textbf{Pearson} is suitable for the statistics of categorical variables. It is necessary to assume that the two variables obey normal distribution respectively, and the standard deviation of the two variables is not 0. Pearson describes the linear correlation and takes the value [- 1,1]. Negative numbers indicate negative correlation and positive numbers indicate positive correlation. On the premise of significance, the greater the absolute value, the stronger the correlation. The absolute value is 0, and there is no linear relationship; An absolute value of 1 indicates a fully linear correlation.
+
+\textbf{Spearman} is a rank correlation coefficient without parameters, which is suitable for the statistics of continuous / ordered variables, that is, its value is independent of the specific value of two related variables, but only related to the size relationship between their values. Among the preconditions for the use of Pearson correlation coefficient, the coefficient can be considered when any one of the conditions is not met.
+p.s.: The p-values are not entirely reliable but are probably reasonable for datasets larger than 500 or so.
+
+\textbf{Kendall} is suitable for the statistics of ordered / classified variables and measures the rank correlation of two groups of variables.
+
+\textbf{It should be noted that,} pearson correlation coefficient is calculated based on the variance and covariance of the original data, so it is sensitive to outliers. It measures linear correlation. Therefore, even if Pearson correlation coefficient is 0, it can only indicate that there is no linear correlation between variables, but there may still be curve correlation. Spearman correlation coefficient and Kendall correlation coefficient are based on the relative size of rank sum observations. They are a more general nonparametric method. They are less sensitive to outliers and therefore more tolerant. The main measure is the relationship between variables.
+
+\textbf{The treatment methods of different distributions are also different}
+
+Before data mining, we need to understand and analyze this data set. Statistical analysis of this new data set is one of the methods to quickly understand this data set. After unifying the data types, the continuous variables that conform to the normal distribution are represented by mean ± standard deviation, the continuous variables that do not conform to the normal distribution are represented by median, and the classified variables are represented by frequency (percentage). Then we can count the distribution characteristics of eigenvalues in each feature and the statistical values of mean, variance, median, mode and so on.
+
+\textbf{Points needing attention in dividing training set and test set}
+
+In order to test the performance of the model, it is necessary to divide the test set that does not participate in the model training. The division of the training set and the test set can be carried out after the feature engineering or before the feature engineering, as long as the training set data and the test set data maintain the same data processing method. When the population sample is divided into training set and test set, it is necessary to test the parameters of the distribution of training set and test set to ensure that the model can predict on the distribution similar to the training set. For different data types in the training group and the test group, different hypothesis tests are used for calculation. Distribution similarity test of continuous variables: independent sample t-test is used for normal distribution variables; Kruskal Wallis (kw) nonparametric rank sum test was used for non normally distributed variables. Mann Whitney U test was performed on the categorical variables of the training group and the test group.
+
+\subsubsection{Feature scaling}
+We often encounter different types and ranges of variables in the same medical data set.Different variables have different values and orders of magnitude, such as age and drug concentration.When the level of each variable differs greatly if the original variable value is directly used for analysis, the role of the variable with a higher numerical value in the comprehensive analysis will be highlighted, and the effect of the variable with a lower numerical level will be relatively weakened.For example, when the original age and drug concentration data are used, generally, age characteristics with a larger range will be given a higher weight than those with a smaller range of drug concentration, resulting in deviations in drug research conclusions.To solve this problem, we need to apply scaling techniques to the features of the data in the data preprocessing step.Normalization and standardization are common terms for scaling techniques, but they mean different things.
+Normalization is used to normalize data into a specific interval, such as [0,1]. 
+
+\textbf{Data normalization processing mainly includes two aspects:} data homogenization processing and dimensionless processing. Data homogenization processing mainly solves the problem of data of different natures. The direct summation of indicators of different nature cannot correctly reflect the comprehensive results of different forces. And then add up to get the correct result. Data dimensionless processing mainly solves the comparability of data to remove the unit limitation of the data and convert it into a pure dimensionless value so that indicators of different units or magnitudes can be compared and weighted. After the above standardization process, the original data are converted into dimensionless index evaluation values. That is, each index value is at the same level of magnitude, and comprehensive evaluation and analysis can be carried out.
+
+\textbf{Many machine learning algorithms use this normalization method,} such as support vector machines, logistic regression, and artificial neural networks. Standardization is used to change the distribution of data by changing the distribution of data to a normal distribution. Scaling plays a crucial role in the application of distance and similarity measurement, such as support vector machine (SVM) and K-nearest Neighbor algorithm (KNN). In statistics and machine learning it is common to deal with different kinds of data (e.g. acoustic signals, pixel values of an image, lactate levels, platelet concentrations) which have different dimensions. When the data required by the application meets normal distribution, normalizing the original data is beneficial to the implementation of algorithms, such as Linear discriminator (LDA) and Gaussian Naive Bayes. 
+
+The numerical differences between multiple features/variables are too large, then the convergence rate will be slow in data processing. \textbf{For example,} the value x1 is from 0 to 2000, and the value x2 is from 1 to 5. If there only these two features/variables, when they are optimized, a narrow and long ellipse will be obtained, resulting in the direction of the gradient when the gradient descends. Zigzag for the direction of the vertical contours, which makes iterations very slow. From experience, normalization is to make the features between different dimensions have a certain numerical comparison, which can significantly improve the accuracy of the classifier.
+
+
+\textbf{Difference from Normalization and Standardization}. 
+
+The essence of normalization and normalization is scaling and translation.What they have in common is that they can cancel the errors caused by different dimensions. They are all linear changes, and they are all translated in proportion to the vector x. The difference between them is that: First, normalization is to convert the eigenvalues of the sample to the same dimension (map the data to a fixed interval). The method is determined only by the extreme values of the variables.Second, standardization is to process the data according to the columns of the feature matrix, and convert the sample eigenvalues into a standard normal distribution by the Z-score method. This method is related to the distribution of the overall sample, and each sample point can have an impact on standardization.
+
+\textbf{Methods}
+\begin{itemize}
+\item \textbf{Min-max normalization/0-1 normalization}
+
+Also called dispersion standardization, it is a linear transformation of the original data, so that the result falls into the [0,1] interval. The conversion function is as follows
+
+
+\begin{equation}
+x=\frac{X-X_{min}}{X_{max}-X_{min} }
+\end{equation}
+
+
+% \begin{lstlisting}
+% def normalization(x):
+%     return [(float(i)-min(x))/float(max(x)-min(x)) for i in x]
+% \end{lstlisting}
+
+If the value X is to be mapped to the interval [a,b], the formula is\\
+\[
+x=a+\frac{(X-X_{min})(b-a)}{X_{max}-X_{min}}
+\]
+
+
+\item \textbf{Mean normalization }
+
+If the value X is to be mapped to the interval [-1. 1], the mean value of A(Xmean) needs to be calculated, and the normalization method of mean value is formulated as\\
+
+\begin{equation}
+x=\frac{X-X_{mean}}{X_{max}-X_{min} }
+\end{equation}
+
+
+\item \textbf{Standardization }
+
+Z-score NormalizationM, This method is based on the homogeneity Xmean and standard deviation Xstd of the original data X of attribute A to standardize the data, and is suitable for the situation where the maximum value XMax and the minimum value XMin of attribute A are unknown or there are outlier data beyond the range of values.The default normalization method in SPSS is Z-score. The standardized variable value fluctuates around 0, greater than 0 means above average, and less than 0 means below average.the formula is\\
+
+\begin{equation}
+x=\frac{X-X_{Mean}}{X_{Std}}
+\end{equation}
+\end{itemize}
+
+
+\subsubsection{Anomaly detection in EHR}% 2.4.3 
+
+There are many unknown noises in electronic medical records, which leads to the "truth" of patients being hidden in clinical treatment. Secondly, the existence of individual differences makes it possible for each patient to have a large gap, resulting in the long tail effect. Due to the above problems, there are often data that deviate significantly from the conventional value in the records of laboratory test results and vital signs. We assume that due to systematic error, human error or data sampling error, some data are inconsistent with the overall distribution, which is called outliers. 
+
+\textbf{Outliers will bring noise interference to the training and prediction of the model, which will affect the accuracy of the prediction results.} In the general prediction model, it is a mapping function for the overall data distribution. This mapping needs the unity of data sample distribution, and the points inconsistent with the overall distribution will interfere with the mapping results. Effective detection and removal of outliers is an important step in feature engineering. If the abnormal value is due to the abnormality of the data itself, its analysis is meaningful. This kind of data often hides other information, such as the abnormal data caused by instruments and equipment, such as the sudden risk factors of a certain disease.
+
+\textbf{For example}, the temperature of the patient is 27.8 ° C, the pH value is 3.26 (normal range is 5.00-9.00), and the specific gravity (SG) of urine is 1.96 (normal range is 1.01-1.03).
+
+\textbf{Methods}
+
+The processing of outliers includes binning, retrieving other data sources and learning methods such as regression and clustering. The packing method smoothes the ordered data values by checking the values around the data. The key of packing method is the size of sub box. The regression method is to modify the noise value by setting a function model that conforms to the data attribute value. Some unsupervised learning methods construct clusters by clustering methods. The attributes of data points in the same group are similar, but the attribute values of data points between different clusters have a large deviation. An example of an outlier detection method is as follows Figure \ref{fig:outliers}:
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.7\linewidth]{images/outliers.png}
+    \caption{An example of an outlier detection method is as follows.Blue dots are outer distribution (abnormal) values, and yellow dots are inner distribution values}
+    \label{fig:outliers}
+\end{figure}
+
+\subsubsection{Binning}
+Data binning (also known as discrete binning or segmentation) is a data preprocessing technology (both continuous and discrete variables can be used) to reduce the impact of secondary observation errors. It is a method of grouping multiple continuous values into a small number of "binning". That is, the box splitting operation discretizes the continuous variables for the purpose of "large difference between groups and small difference within groups".
+
+\textbf{Why do we need to binning.} 
+
+The binning has strong robustness to abnormal data. If the features are not discretized, the abnormal data "age: 150" will cause great interference to the model, and the improvement of robustness will further improve the generalization performance of the model
+For example, if the user's age is discretized, 20-30 years old will not become a completely different person, because the user is one year older than him. Of course, the samples adjacent to the interval are the opposite, so how to divide the interval is very important. After the scale of the data is blurred and the features are discretized, the risk of model overfitting can be reduced when the number of data sets is small. Since the increase and decrease of discrete features are easy, the model can be easily and quickly iterated.
+Logistic regression is a generalized linear model with limited expression ability. After a single variable is discretized into N, each variable has a separate weight, which is equivalent to introducing nonlinearity into the model, which can improve the expression ability of the model and increase the fitting degree. For the neural network model, after feature discretization, feature crossover can be carried out, from M + n variable to m * n variable, and further non-linearity is introduced to improve the expression ability.
+
+\textbf{Methods}
+
+The Binning method is divided into supervised method and unsupervised method according to whether label is adopted. The supervised method includes \textbf{ChiMerge}, \textbf{Best KS},\textbf{Decision Tree},\textbf{Minimum Entropy}, and the unsupervised method includes,\textbf{Equal Width} and \textbf{Equal Frequency}. The binning method of equal width is shown in the Figure \ref{fig:equal_width_bining}.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/equal_width_bining.png}
+    \caption{An example of equal width binning method}
+    \label{fig:equal_width_bining}
+\end{figure}
+
+
+\subsubsection{Time series analysis}
+Time series data is an important part of ICU table data. For example, the laboratory indexes (blood lactic acid or creatinine, etc.) every day after admission to the ICU, the total amount of intravenous infusion in each time period after admission to the ICU, and so on. The development process, direction and trend of the data at that time, and the prediction of the possible goals in the time domain in the future are the goals of time series analysis.
+\subsubsection{Sample grouping}
+Because the information in the electronic medical record is often recorded periodically during hospitalization or ICU admission, this leads to features such as drug infusion or body fluid monitoring that contain multiple records in a period of time. When it is necessary to process electronic medical records for a certain type of task, it is often necessary to integrate multiple records of the same characteristics, so as to have the value of data analysis, that is, it is necessary to perform sample aggregation on the data. For example: when we read the CHARTEVENTS table of the mimic3 data set, we need to aggregate the monitoring indicators in the ICU according to the mean, maximum, minimum or median and other methods in the recording stage of the entire ICU.
+
+\textbf{For example,} when the oriented task is death diagnosis, the last time-sorted data of the patient examination is valid, and the rest of the data should be discarded. 
+
+\textbf{For another example,} when the task type is drug dose prediction, the drug doses of the same item for the same patient should be averaged, and all samples are aggregated according to patient ID and item ID, and the drug dose is averaged. It should be noted here that it is necessary to consider whether the unit of the dose is unified. The method here is to first deduplicate the data according to the triplet of (item ID, patient ID, dose). Then group the data according to the 2-tuple of (item ID, patient ID), and average the items representing the dose and dose value in each group.
+
